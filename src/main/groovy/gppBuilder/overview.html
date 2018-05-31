@@ -1,0 +1,28 @@
+gppBuilder for the Groovy Parallel Patterns (gpp)<p>
+
+copyright 2015-18 Jon Kerridge Edinburgh Napier University<p>
+
+contact j.kerridge @ napier.ac.uk <p>
+
+The gppBuilder program converts the source definition of an application defined using the GPP library into a form that can be executed as a Groovy script. <p>
+
+The source file is provided as \path\filename_gpp.grooy .  The .groovy suffix means that the source is checked by the Groovy system during its creation.  The source should contain all the required data definitions and assumes that all the required user developed code is available.  These data definitions should precede the definition of the required process definitions.  The format of the source file should be:<p>
+
+<pre>
+Constant declarations
+Definitions of GPP Data, Result and Local and other Detail data objects
+Initialisation code to be obeyed before the process network is created
+Process definitions omitting input and output properties
+     The definitions should appear in the order in which data flows
+     through the process network; ordering is crucial.
+Finalisation code
+</pre>
+
+Examples of the additional coding could include the initialisation of a start time with the corresponding finalisation code being to print out the total execution time.<p>
+
+The gppBuild program create a file called \path\filename.groovy.
+
+
+     If the transformation generated errors then the output file will contain an indication of the error at the place where it was found in the source file.<p>
+
+If the transformation was successful the output file will contain the application in a form that can be executed as a Groovy script.

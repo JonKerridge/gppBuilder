@@ -72,7 +72,7 @@ class GPPlexingMethods  {
 
 	def scanChanSize = { List l ->
 		int line
-		for ( i in l[0]..l[1]){
+		for ( i in (int)l[0]..(int)l[1]){
 			if ((inText[i] =~ /workers/) ||
 				(inText[i] =~ /mappers/) ||
 				(inText[i] =~ /reducers/) ||
@@ -203,6 +203,19 @@ class GPPlexingMethods  {
 	}
 
 	def ListFanOne = { String processName, int starting, int ending ->
+//		println "$processName: $starting, $ending"
+		confirmChannel(processName, ChanTypeEnum.list)
+		def rvs = extractProcDefParts(starting)
+		network += rvs[0] + "\n"
+		network += "    inputList: ${currentInChanName}InList,\n"
+		network += "    output: ${currentOutChanName}.out(),\n"
+		checkNoProperties(rvs)
+		copyProcProperties(rvs, starting, ending)
+		preNetwork = preNetwork + "def $currentOutChanName = Channel.one2one()\n"
+		swapChannelNames(ChanTypeEnum.one)
+	}
+
+	def ListMergeOne = { String processName, int starting, int ending ->
 //		println "$processName: $starting, $ending"
 		confirmChannel(processName, ChanTypeEnum.list)
 		def rvs = extractProcDefParts(starting)

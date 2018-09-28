@@ -1,19 +1,23 @@
 group 'gppBuilder'
-version '1.0.0-alpha-1'
+version '1.0.0-alpha-4'
 
 apply plugin: 'groovy'
 apply plugin: 'java'
 
-sourceCompatibility = 1.8
+//sourceCompatibility = 1.8
 
 repositories {
   mavenCentral()
   jcenter()
+    // following required for groovy-all:3.0.0
+    maven {
+        url "https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all"
+    }
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.12'
-    testCompile 'org.codehaus.groovy:groovy-all:2.4.12'
+    compile 'org.codehaus.groovy:groovy-all:3.0.0-alpha-3'
+    testCompile 'org.codehaus.groovy:groovy-all:3.0.0-alpha-3'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 

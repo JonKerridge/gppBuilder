@@ -518,6 +518,7 @@ class GPPlexingMethods  {
         def rvs = extractProcDefParts(starting)
         network += rvs[0] + "\n"
         network += "    inputAny: ${currentInChanName}.in(),\n"
+        if (logging) network += logChanAdd
         network += "    // no output channel required\n"
         copyProcProperties(rvs, starting, ending)
     }        
@@ -558,6 +559,7 @@ class GPPlexingMethods  {
 		def rvs = extractProcDefParts(starting)
 		network += rvs[0] + "\n"
 		network += "    inputList: ${currentInChanName}InList,\n"
+        if (logging) network += logChanAdd
 		network += "    // no output channel required\n"
 		copyProcProperties(rvs, starting, ending)
 	}
@@ -677,6 +679,7 @@ class GPPlexingMethods  {
 		def rvs = extractProcDefParts(starting)
 		network += rvs[0] + "\n"
 		network += "    input: ${currentInChanName}.in(),\n"
+        if (logging) network += logChanAdd
 		network += "    // no output channel required\n"
 		copyProcProperties(rvs, starting, ending)
 	}
@@ -801,11 +804,10 @@ class GPPlexingMethods  {
         String collectors = logTokens[1]
         String logFileName = logTokens[2]
         logging = true
-        preNetwork += inText[currentLine] + "\n\n"    // add the annotation line
-        preNetwork += "import gppLibrary.Logger\n"
+        preNetwork += "\nimport gppLibrary.Logger\n"
         preNetwork += "import gppLibrary.LoggingVisualiser\n\n"
-        preNetwork += "def logChan = Channel.any2one()"
-        preNetwork += "Logger.initLogChannel(logChannel.out())\n"
+        preNetwork += "def logChan = Channel.any2one()\n"
+        preNetwork += "Logger.initLogChannel(logChan.out())\n"
         preNetwork += "def logVis = new LoggingVisualiser ( logInput: logChan.in(), \n"
         preNetwork += "                     collectors: $collectors,\n"
         preNetwork += "                     logFileName: $logFileName )\n\n"

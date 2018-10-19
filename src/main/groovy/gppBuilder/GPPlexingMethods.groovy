@@ -8,6 +8,8 @@ class GPPlexingMethods  {
 	String network = "\n"
 	String postNetwork = "\n"
 
+    String logChanAdd = "    visLogChan : logChan.out(),\n"
+
 	def processNames = []
 	def chanNumber = 1
 	String currentOutChanName = "chan$chanNumber"
@@ -21,6 +23,7 @@ class GPPlexingMethods  {
 	int endLine = 0
 
     boolean pattern = false
+    boolean logging = false
 
 	def getInput(FileReader reader) {
 		reader.each{String line ->
@@ -466,6 +469,7 @@ class GPPlexingMethods  {
 		def rvs = extractProcDefParts(starting)
 		network += rvs[0] + "\n"
 		network += "    inputAny: ${currentInChanName}.in(),\n"
+        if (logging) network += logChanAdd
 		network += "    // no output channel required\n"
 		copyProcProperties(rvs, starting, ending)
 	}
@@ -792,11 +796,29 @@ class GPPlexingMethods  {
 		}
 	}
 
+    def processLogDetails = {
+        List logTokens = inText[currentLine].tokenize()
+        String collectors = logTokens[1]
+        String logFileName = logTokens[2]
+        logging = true
+        preNetwork += inText[currentLine] + "\n\n"    // add the annotation line
+        preNetwork += "import gppLibrary.Logger\n"
+        preNetwork += "import gppLibrary.LoggingVisualiser\n\n"
+        preNetwork += "def logChan = Channel.any2one()"
+        preNetwork += "Logger.initLogChannel(logChannel.out())\n"
+        preNetwork += "def logVis = new LoggingVisualiser ( logInput: logChan.in(), \n"
+        preNetwork += "                     collectors: $collectors,\n"
+        preNetwork += "                     logFileName: $logFileName )\n\n"
+        processNames << "logVis"
+    }
+
 	def processPreNetwork = {
 		boolean startProcess = ( (inText[currentLine] =~ /Emit/) ||
 								 (inText[currentLine] =~ /Parallel/) )
 		while ( ! startProcess){
 			preNetwork += inText[currentLine] + "\n"
+			// added to deal with logging
+            if (inText[currentLine].startsWith("//@log")) processLogDetails()
 			currentLine ++
 			startProcess = ( (inText[currentLine] =~ /Emit/) ||
 							 (inText[currentLine] =~ /Parallel/) )

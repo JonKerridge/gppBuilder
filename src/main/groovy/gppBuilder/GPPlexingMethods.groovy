@@ -713,15 +713,18 @@ class GPPlexingMethods  {
 	}
 
 	def EmitWithFeedback = {String processName, int starting, int ending ->
-		println "$processName: $starting, $ending"
-		network += inText[starting]
-//			def rvs = extractProcDefParts(starting)
-//			network += rvs[0] + "\n"
-//			network += "    // input channel not required\n"
-//			network += "    output: ${currentOutChanName}.out(),\n"
-//			copyProcProperties(rvs, starting, ending)
-//			preNetwork = preNetwork + "def $currentOutChanName = Channel.one2one()\n"
-//			swapChannelNames(ChanTypeEnum.one)
+		// assumes there is only one feedback loop in the network!!
+        // the feedback channel is named explicitly
+//		println "$processName: $starting, $ending"
+//		network += inText[starting]
+		def rvs = extractProcDefParts(starting)
+		network += rvs[0] + "\n"
+		network += "    feedback: feedbackChan.in(),\n"
+		network += "    output: ${currentOutChanName}.out(),\n"
+		copyProcProperties(rvs, starting, ending)
+		preNetwork = preNetwork + "def feedbackChan = Channel.one2one()\n"
+		preNetwork = preNetwork + "def $currentOutChanName = Channel.one2one()\n"
+		swapChannelNames(ChanTypeEnum.one)
 	}
 
 	def EmitWithLocal = {String processName, int starting, int ending ->
@@ -754,7 +757,16 @@ class GPPlexingMethods  {
 	}
 
 	def FeedbackBool = { String processName, int starting, int ending ->
-		println "$processName: $starting, $ending"
+//		println "$processName: $starting, $ending"
+        confirmChannel(processName, ChanTypeEnum.one)
+        def rvs = extractProcDefParts(starting)
+        network += rvs[0] + "\n"
+        network += "    input: ${currentInChanName}.in(),\n"
+        network += "    output: ${currentOutChanName}.out(),\n"
+        network += "    feedback: feedbackChan.out(),\n"
+        copyProcProperties(rvs, starting, ending)
+        preNetwork = preNetwork + "def $currentOutChanName = Channel.one2one()\n"
+        swapChannelNames(ChanTypeEnum.one)
 	}
 
 	def FeedbackObject = { String processName, int starting, int ending ->

@@ -1,6 +1,7 @@
 group 'gppBuilder'
-version '1.0.0-alpha-5'
+version '1.0.0-alpha-6'
 // version 5 adds logging
+// version 6 adds feedback boolean
 apply plugin: 'groovy'
 apply plugin: 'java'
 

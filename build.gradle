@@ -1,9 +1,10 @@
 group 'gppBuilder'
-version '1.0.0-alpha-8'
+version '1.0.0-alpha-9'
 // version 5 adds logging
 // version 6 adds feedback boolean
 // version 7 non existent
 //version 8 JDK11 and groovy 3 alpha 4
+// version 9 JDK12 Groovy3-alpha4 plus Hendrie visulaiser
 apply plugin: 'groovy'
 apply plugin: 'java'
 
